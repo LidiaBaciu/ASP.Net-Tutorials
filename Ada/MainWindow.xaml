@@ -1,0 +1,77 @@
+﻿<Window x:Class="Ada.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:uiContexts="clr-namespace:Ada.Context.UI.Tabs"
+        xmlns:borderouContext ="clr-namespace:Ada.Context.Tabs.BorderouTab"
+        xmlns:furnizoriContext ="clr-namespace:Ada.Context.Tabs.ComenziFurnizori"
+        xmlns:stocShowContext ="clr-namespace:Ada.Context.Tabs.StocShowroomTab"
+        xmlns:stocDepozitContext ="clr-namespace:Ada.Context.Tabs.StocDepozitTab"
+        xmlns:local="clr-namespace:Ada"
+        mc:Ignorable="d"
+        WindowState="Maximized"
+        WindowStyle="SingleBorderWindow"
+        Title="Ada Desktop App" Height="800" Width="1200">
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type borderouContext:BorderouContext}">
+            <uiContexts:BorderouUI />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type furnizoriContext:ComenziFurnizoriContext}">
+            <uiContexts:ComenziFurnizoriUI />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type stocDepozitContext:StocDepozitContext}">
+            <uiContexts:StocDepozitUI />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type stocShowContext:StocShowroomContext}">
+            <uiContexts:StocShowroomUI />
+        </DataTemplate>
+        
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid Background="#FF31577E"  Grid.Row="0" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="180"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="100"/>
+            </Grid.ColumnDefinitions>
+            <Grid.Effect>
+                <DropShadowEffect BlurRadius="2" ShadowDepth="1" Color="#FFAEAEAE"/>
+            </Grid.Effect>
+            <TextBlock Grid.Column="0" Text="ADA Electric S.R.L" FontSize="15" Margin="20, 0" HorizontalAlignment="Left" VerticalAlignment="Center" FontFamily="Century Gothic"/>
+            <Menu DockPanel.Dock="Top" HorizontalAlignment="Right" VerticalAlignment="Center" Background="Transparent"
+                      Margin="0, 0, 15,0" Grid.Column="2">
+                <MenuItem Header="Profile" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <!--<MenuItem Header="Login" IsEnabled="{Binding Path=IsNotConnect}" Click="Event_Windows_Login"/>
+                        <MenuItem Header="Logout" IsEnabled="{Binding Path=IsConnect}" Click="Event_LogOut"/> -->
+                    <MenuItem Header="Quit" Click="Event_CloseWindow"/>
+                </MenuItem>
+            </Menu>
+            <ItemsControl ItemsSource="{Binding PageViewModels}" Grid.Column="1" >
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <Button Command="{Binding DataContext.ChangePageCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+                                CommandParameter="{Binding }" Background="Transparent" Height="40" 
+                                Margin="2,5">
+                                <TextBlock  HorizontalAlignment="Center" Text="{Binding Name}" Margin="5 5 " Foreground="White"/>
+                            </Button>
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Grid>
+
+        <ContentControl Grid.Row="1" Grid.Column="1" Content="{Binding CurrentPageViewModel}" Margin="10" />
+
+    </Grid>
+</Window>

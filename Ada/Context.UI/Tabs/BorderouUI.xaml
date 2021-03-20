@@ -1,0 +1,125 @@
+﻿<Grid x:Class="Ada.Context.UI.Tabs.BorderouUI"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib" 
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="30"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Grid.Resources>
+            <Style x:Key="GroupHeaderStyle" TargetType="{x:Type GroupItem}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type GroupItem}">
+                            <Expander IsExpanded="False"  Background="#FF31577E" Margin="5, 0">
+                                <Expander.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding Name}" Foreground="White" FontWeight="Bold"/>
+                                        <TextBlock Text="Count:" Foreground="White" Margin="4, 0"/>
+                                        <TextBlock Text="{Binding ItemCount}" Foreground="White" Margin="1, 0"/>
+                                    </StackPanel>
+                                </Expander.Header>
+                                <ItemsPresenter/>
+                            </Expander>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <BooleanToVisibilityConverter x:Key="BoolToVisConverter"/>
+        </Grid.Resources>
+        <Grid Grid.Row="0" Grid.Column="0">
+            
+            <Border CornerRadius="6" BorderBrush="Gray" BorderThickness="1" Margin="3">
+                <StackPanel Orientation="Horizontal" 
+                            HorizontalAlignment="Left" Margin="5, 4">
+                    <Button Content="Creaza" Width="100" Height="25" Margin="4, 0" Style="{DynamicResource InformButton}"  Command="{Binding DoAction_AddEntry}"/>
+                    <Button Content="Sterge" Width="100" Height="25" Style="{DynamicResource InformButton}" Command="{Binding DoAction_DeleteEntry}" Margin="4, 0"/>
+                    <Button Content="Modifica" Width="100" Height="25" Style="{DynamicResource InformButton}" Command="{Binding DoAction_EditEntry}" Margin="4, 0"/>
+                    <Label Content="Hide filters" VerticalAlignment="Center"/>
+                    <ToggleButton Content="Filters" Width="60" Command="{Binding DoAction_ToggleFilterPanel}" Margin="6"
+                  VerticalAlignment="Center" Height="10"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+        <Grid Grid.Row="1">
+            <DataGrid x:Name="dg" AutoGenerateColumns="True" IsReadOnly="False"
+                      ItemsSource="{Binding BorderouView, Mode=TwoWay}" 
+                      VirtualizingPanel.IsVirtualizingWhenGrouping="True"
+                      CanUserAddRows="False" CanUserDeleteRows="False"
+                      IsSynchronizedWithCurrentItem="True"
+                      EnableRowVirtualization="True">
+
+                <!--<DataGrid.Columns>
+                    <DataGridTemplateColumn Header="Selection" IsReadOnly="False">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox IsChecked="{Binding Path=IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                          HorizontalAlignment="Center"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    
+                    <DataGridTextColumn Binding="{Binding Website}"  Header="Website"/>
+                    <DataGridTextColumn Binding="{Binding Factura}"  Header="Factura"/>
+                    <DataGridTextColumn Binding="{Binding FacturaData}"  Header="Factura data"/>
+                </DataGrid.Columns>-->
+                <DataGrid.GroupStyle>
+                    <GroupStyle ContainerStyle="{StaticResource GroupHeaderStyle}">
+                        <GroupStyle.Panel>
+                            <ItemsPanelTemplate>
+                                <DataGridRowsPresenter/>
+                            </ItemsPanelTemplate>
+                        </GroupStyle.Panel>
+                    </GroupStyle>
+                </DataGrid.GroupStyle>
+            </DataGrid>
+        </Grid>
+        <Grid Grid.Row="2">
+            <TextBlock Text="{Binding Summary}"/>
+        </Grid>
+        <Grid  Grid.Column="1" Grid.RowSpan="2" MinWidth="250" MaxWidth="250"
+               Visibility="{Binding AreFiltersShown, Converter={StaticResource BoolToVisConverter}}">
+            <StackPanel Orientation="Vertical">
+                <StackPanel.Resources>
+                    <Style TargetType="{x:Type ComboBox}">
+                        <Setter Property="SelectedIndex" Value="0"/>
+                        <Setter Property="Margin" Value="4,0,6,0"/>
+                    </Style>
+                </StackPanel.Resources>
+                <TextBlock Text="Data inceput" Margin="5, 10, 0, 0" FontSize="14" FontWeight="SemiBold" />
+                <DatePicker SelectedDate="{Binding Path=StartDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsTodayHighlighted="True"/>
+                <TextBlock Text="Data sfarsit" Margin="5, 10, 0, 0" FontSize="14" FontWeight="SemiBold" />
+                <DatePicker SelectedDate="{Binding Path=EndDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  IsTodayHighlighted="True"/>
+                <Button Content="Filtreaza" Style="{DynamicResource InformButton}" Command="{Binding ApplyFilter}" Margin="5, 6"/>
+                <Button Content="Sterge filtru" Style="{DynamicResource InformButton}" Command="{Binding RemoveFilter}" Margin="5, 6"/>
+                <TextBlock Text="Group entries by:" Margin="5, 10, 0, 0" FontSize="14" FontWeight="SemiBold" />
+                <ComboBox ItemsSource="{Binding GroupsNames}" SelectedValue="{Binding SelectedGroup, Mode=OneWayToSource}"/>
+                <Button Content="Group" Style="{DynamicResource InformButton}" Command="{Binding ApplyGroup}" Margin="5, 6"/>
+                <Button Content="Ungroup" Style="{DynamicResource InformButton}" Command="{Binding ApplyUnGroup}" Margin="5, 6" />
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Suma valoare factura:" Margin="5, 10, 0, 0" FontSize="14" FontWeight="SemiBold" />
+                    <TextBlock Text="{Binding SumaValoareFactura}" Margin="5, 10, 0, 0" FontSize="14" FontWeight="SemiBold" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Suma transport factura: " Margin="5, 10, 0, 0" FontSize="14" FontWeight="SemiBold" />
+                    <TextBlock Text="{Binding SumaTransportFactura}" Margin="5, 10, 0, 0" FontSize="14" FontWeight="SemiBold" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Suma cost curier: " Margin="5, 10, 0, 0" FontSize="14" FontWeight="SemiBold" />
+                    <TextBlock Text="{Binding SumaCostCurier}" Margin="5, 10, 0, 0" FontSize="14" FontWeight="SemiBold" />
+                </StackPanel>
+            </StackPanel>
+            
+        </Grid>
+    </Grid>
+</Grid>
